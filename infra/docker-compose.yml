@@ -1,0 +1,16 @@
+services:
+
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    ports:
+      - "5432:5432"
