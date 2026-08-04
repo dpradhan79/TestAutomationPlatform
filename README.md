@@ -16,7 +16,7 @@ The solution is planned for production scale usage.
 4. MainAgent - It should delegate tasks to subagents - IntentGeneratorAgent, StepGeneratorAgent and TestScriptGeneratorAgent in asynchronomous mode.
 
 
-# TestAutomationPlatoform
+# TestAutomationPlatform
 
 ## Vision
 
