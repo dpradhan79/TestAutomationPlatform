@@ -16,11 +16,11 @@ The solution is planned for production scale usage.
 4. MainAgent - It should delegate tasks to subagents - IntentGeneratorAgent, StepGeneratorAgent and TestScriptGeneratorAgent in asynchronomous mode.
 
 
-# TestScriptGeneratorAgent
+# TestAutomationPlatoform
 
 ## Vision
 
-TestScriptGeneratorAgent is a production-grade Agentic AI platform that converts business requirements into executable test automation assets.
+TestAutomationPlatform is a production-grade Agentic AI platform that converts business requirements into executable test automation assets.
 
 The platform is being built to:
 
