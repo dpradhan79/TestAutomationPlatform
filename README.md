@@ -1,4 +1,4 @@
-# TestScriptGeneratorAgent
+# TestAutomationPlatform
 
 This is the deep agent solution to build test scripts from natural language, which can be read from external source such as JIRA, Azure DevOps.
 This will have independent agents, which will act as subagents.
