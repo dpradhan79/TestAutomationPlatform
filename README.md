@@ -105,65 +105,65 @@ while remaining:
 
 ### Platform Overview
 
-- #vision
-- #problem-statement
-- Design Principles
-- #documentation-strategy
-- #current-project-status
-- #current-development-focus
-- #platform-maturity-model
+- [Vision](#vision)
+- [Problem Statement](#problem-statement)
+- [Design Principles](#design-principles)
+- [Documentation Strategy](#documentation-strategy)
+- [Current Project Status](#current-project-status)
+- [Current Development Focus](#current-development-focus)
+- [Platform Maturity Model](#platform-maturity-model)
 
 ### Platform Architecture
 
-- Current Architecture
-- #target-architecture
-- #agent-interaction-model
-- #end-to-end-workflow
-- #agent-responsibilities
+- [Current Architecture](#current-architecture)
+- [Target Architecture](#target-architecture)
+- [Agent Interaction Model](#agent-interaction-model)
+- [End-To-End Workflow](#end-to-end-workflow)
+- [Agent Responsibilities](#agent-responsibilities)
 
 ### Quality And Governance
 
-- #dual-review-gate-architecture
-- #autonomous-quality-improvement-loop
-- #configurable-hitl-policy
-- #quality-scoring-framework
+- [Dual Review Gate Architecture](#dual-review-gate-architecture)
+- [Autonomous Quality Improvement Loop](#autonomous-quality-improvement-loop)
+- [Configurable HITL Policy](#configurable-hitl-policy)
+- [Quality Scoring Framework](#quality-scoring-framework)
 
 ### Agent Framework
 
-- #architecture-principles
-- #agent-design-principles
-- #skill-architecture
-- #skill-lifecycle
-- #agent-contract-strategy
-- #agent-internal-architecture
+- [Architecture Principles](#architecture-principles)
+- [Agent Design Principles](#agent-design-principles)
+- [Skill Architecture](#skill-architecture)
+- [Skill Lifecycle](#skill-lifecycle)
+- [Agent Contract Strategy](#agent-contract-strategy)
+- [Agent Internal Architecture](#agent-internal-architecture)
 
 ### Context And Memory
 
-- #context-management-strategy
-- #memory-strategy
-- #checkpoint-strategy
-- #persistence-strategy
+- [Context Management Strategy](#context-management-strategy)
+- [Memory Strategy](#memory-strategy)
+- [Checkpoint Strategy](#checkpoint-strategy)
+- [Persistence Strategy](#persistence-strategy)
 
 ### Platform Infrastructure
 
-- Tool Architecture
-- #renderer-architecture
-- #llm-strategy
-- #prompt-management-strategy
-- #observability-strategy
-- #platform-evaluation-plan
+- [Tool Architecture](#tool-architecture)
+- [Renderer Architecture](#renderer-architecture)
+- [LLM Strategy](#llm-strategy)
+- [Prompt Management Strategy](#prompt-management-strategy)
+- [Observability Strategy](#observability-strategy)
+- [Platform Evaluation Plan](#platform-evaluation-plan)
 
 ### Implementation
 
-- #repository-structure
-- #planned-phases
+- [Repository Structure](#repository-structure)
+- [Planned Phases](#planned-phases)
 
 ### Governance
 
-- #architecture-documentation-roadmap
-- Architecture Decision Records
-- #future-enhancements
-- #canonical-architecture-document
+- [Architecture Documentation Roadmap](#architecture-documentation-roadmap)
+- [Architecture Decision Records](#architecture-decision-records)
+- [Future Enhancements](#future-enhancements)
+- [Canonical Architecture Document](#canonical-architecture-document)
 ---
 
 ## Vision
@@ -2548,7 +2548,10 @@ Example:
 
 Ownership ensures:
 
-- Clear 
+- Clear ownership
+
+---
+
 ## Context Management Strategy
 
 Context is one of the most important assets within the platform.

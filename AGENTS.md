@@ -20,6 +20,28 @@ AGENTS.md focuses on agent behavior, ownership, and implementation responsibilit
 
 ---
 
+## Table of Contents
+
+- [Development Status](#development-status)
+- [Target Agent Hierarchy](#target-agent-hierarchy)
+- [Agent Ownership Matrix](#agent-ownership-matrix)
+- [Core Implementation Rules](#core-implementation-rules)
+- [MainAgent](#mainagent)
+- [KnowledgeAgent](#knowledgeagent)
+- [IntentAgent](#intentagent)
+- [ReviewAgent](#reviewagent)
+- [StepAgent](#stepagent)
+- [ScriptAgent](#scriptagent)
+- [Quality Gate Architecture](#quality-gate-architecture)
+- [MainAgent Autonomous Quality Loop](#mainagent-autonomous-quality-loop)
+- [HITL Policy](#hitl-policy)
+- [Skill Ownership](#skill-ownership)
+- [Tool Ownership](#tool-ownership)
+- [Future Agent Evolution](#future-agent-evolution)
+- [Final Principle](#final-principle)
+
+---
+
 ## Development Status
 
 
