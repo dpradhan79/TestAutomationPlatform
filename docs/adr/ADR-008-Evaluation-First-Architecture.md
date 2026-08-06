@@ -22,7 +22,7 @@ DeepEval
 
 ## Scope
 
-IntentGeneratorAgent outputs must be continuously evaluated.
+IntentAgent outputs must be continuously evaluated.
 
 ## Metrics
 

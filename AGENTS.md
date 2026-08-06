@@ -8,132 +8,155 @@ This document defines:
 - Agent ownership boundaries
 - Agent inputs and outputs
 - Delegation rules
-- Tool ownership
+- Review responsibilities
+- Quality gate responsibilities
 - Skill ownership
-- Memory usage
-- Checkpoint strategy
-- HITL workflow
+- Tool ownership
+- HITL responsibilities
 
 README.md remains the canonical architecture document.
 
-This file focuses on agent behavior and implementation responsibilities.
+AGENTS.md focuses on agent behavior, ownership, and implementation responsibilities.
 
 ---
 
-# Agent Hierarchy
+## Development Status
+
+
+| Agent          | Status              |
+| -------------- | ------------------- |
+| IntentAgent    | Phase 1 Foundation |
+| KnowledgeAgent | Planned             |
+| MainAgent      | Planned             |
+| ReviewAgent    | Planned             |
+| StepAgent      | Planned             |
+| ScriptAgent    | Planned             |
+
+Current implementation phase:
+
+```text
+Phase 1 – IntentAgent Foundation
+```
+
+---
+
+## Target Agent Hierarchy
 
 ```text
 MainAgent (DeepAgent)
-|
-+-- KnowledgeAgent (Optional)
-|
-+-- IntentGeneratorAgent
-|
-+-- StepGeneratorAgent
-|
-+-- ReviewAgent
-|
-+-- ScriptAgent
-```
-
-MainAgent orchestrates the entire workflow.
-
-Subagents should focus on a single responsibility.
-
----
-
-# Core Architectural Rules
-
-## Rule 1
-
-Agents own their implementation assets.
-
-Example:
-
-```text
-agent
 │
-├── contracts
-├── prompts
-├── skills
-├── tools
-├── services
-└── tests
+├── KnowledgeAgent
+├── IntentAgent
+├── ReviewAgent
+├── StepAgent
+└── ScriptAgent
 ```
+
+MainAgent orchestrates workflows.
+
+Subagents own business capabilities.
+
+The current Phase 1 runtime is `FastAPI → IntentAgent → create_agent()`. `MainAgent (DeepAgent)` is the target orchestration architecture introduced after the leaf-agent contracts and runtime patterns are established.
+
+The current development model runtime is Ollama. Model access remains provider-agnostic through `BaseChatModel` obtained via `init_chat_model(...)`.
 
 ---
 
-## Rule 2
+## Agent Ownership Matrix
 
-Business logic should remain inside the owning agent.
 
-Avoid:
-
-```text
-shared/god-services
-```
-
----
-
-## Rule 3
-
-Shared modules should contain only:
-
-```text
-Configuration
-
-Observability
-
-ModelFactory
-
-Memory
-
-Checkpointing
-
-Cross-Agent Contracts
-```
+| Agent          | Primary Ownership   |
+| -------------- | ------------------- |
+| MainAgent      | Orchestration       |
+| KnowledgeAgent | Knowledge Retrieval |
+| IntentAgent    | Intent Generation   |
+| ReviewAgent    | Quality Validation  |
+| StepAgent      | Execution Planning  |
+| ScriptAgent    | Artifact Rendering  |
 
 ---
 
-## Rule 4
+## Core Implementation Rules
+
+### Rule 1 – Single Responsibility
+
+Each agent owns one business capability.
+
+Agents should not assume responsibilities owned by other agents.
+
+---
+
+### Rule 2 – Contract Driven
 
 Agents communicate using strongly typed contracts.
 
-Avoid:
+Avoid `dict`; prefer `BaseModel`.
 
-```python
-dict
-```
-
-Prefer:
-
-```python
-pydantic BaseModel
-```
+Phase 1 is contract-first: define versioned Pydantic v2 models before wiring `IntentAgent` into `create_agent()`. The initial flow is `Requirement → IntentResponse`, where `IntentResponse` contains the validated `List[Intent]`. Each agent owns its contracts, prompts, skills, services, tools, and tests.
 
 ---
 
-# MainAgent
+### Rule 3 – Skill Driven
 
-## Purpose
+Business behavior belongs in skills.
 
-System Orchestrator.
+Business behavior should not be hardcoded into agent implementations.
 
-MainAgent is implemented using:
+---
 
-```python
-create_deep_agent(...)
+### Rule 4 – LLM Agnostic
+
+Agents must not depend on provider-specific SDKs.
+
+Prefer `BaseChatModel` obtained through `init_chat_model(...)`.
+
+---
+
+### Rule 5 – Review Before Progression
+
+Generated artifacts must be reviewed before becoming downstream inputs.
+
+---
+
+### Rule 6 – Autonomy Before HITL
+
+The platform should attempt autonomous improvement before requesting human intervention.
+
+---
+
+## MainAgent
+
+### Purpose
+
+Workflow orchestrator.
+
+### Planned Runtime
+
+`create_deep_agent(...)`
+
+### Responsibilities
+
+- Workflow orchestration
+- Agent delegation
+- Agent routing
+- Quality loop execution
+- HITL coordination
+- Memory coordination
+- Checkpoint coordination
+
+### Input
+
+```text
+Requirement
 ```
 
-MainAgent performs:
+### Output
 
-- Planning
-- Reasoning
-- Delegation
-- Routing
-- State coordination
-- Memory integration
-- Checkpoint integration
+```text
+WorkflowResponse
+```
+
+### Important Rule
 
 MainAgent should contain minimal business logic.
 
@@ -141,438 +164,455 @@ Business logic belongs to subagents.
 
 ---
 
-## Input
+## KnowledgeAgent
 
-```python
+### Purpose
+
+Enhance requirements using enterprise knowledge.
+
+### Input
+
+```text
 Requirement
 ```
 
----
+### Output
 
-## Output
-
-```python
-GeneratedArtifact
-```
-
-or
-
-```python
-WorkflowResponse
-```
-
----
-
-## Subagents
-
-```python
-KnowledgeAgent
-
-IntentGeneratorAgent
-
-StepGeneratorAgent
-
-ReviewAgent
-
-ScriptAgent
-```
-
----
-
-# KnowledgeAgent
-
-## Purpose
-
-Requirement augmentation.
-
-KnowledgeAgent enriches requirements using retrieved context.
-
----
-
-## Status
-
-Optional.
-
-Can be disabled through configuration.
-
----
-
-## Input
-
-```python
-Requirement
-```
-
----
-
-## Output
-
-```python
+```text
 AugmentedRequirement
 ```
 
----
-
-## Responsibilities
+### Responsibilities
 
 - Knowledge retrieval
 - Context enrichment
-- Context summarization
+- Requirement augmentation
 - Hallucination reduction
 
----
+### Bounded Retrieval Improvement Loop
 
-## Future Sources
+KnowledgeAgent may refine retrieval when context relevance is below the configured threshold. The loop is finite and independently configured from Intent and Step quality-review loops.
 
-```text
-PDF
-
-JIRA
-
-Azure DevOps
-
-Confluence
-
-SharePoint
-
-Internal Wikis
+```yaml
+knowledge_retrieval:
+  maximum_iterations: 3
+  minimum_context_relevance_score: 0.85
 ```
 
+The loop stops when the relevance threshold is met, the maximum iterations are reached, or a timeout/resource budget is exceeded. KnowledgeAgent must return an explicit retrieval-quality result or escalate according to workflow policy; it must not retry indefinitely.
+
+When the relevance threshold is not achieved, the best available context must be retained and returned with its retrieval-quality result or escalated according to workflow policy.
+
+### Future Knowledge Sources
+
+- PDF
+- Confluence
+- JIRA
+- Azure DevOps
+- SharePoint
+- Internal Wikis
+
 ---
 
-## Folder
+## IntentAgent
+
+### Purpose
+
+Convert requirements into structured business intents.
+
+### Input
 
 ```text
-knowledge_agent
-│
-├── contracts
-├── prompts
-├── skills
-├── services
-├── ingestion
-├── retrieval
-└── tests
-```
-
----
-
-# IntentGeneratorAgent
-
-## Purpose
-
-Convert requirements into business intents.
-
----
-
-## Input
-
-```python
 Requirement
 ```
 
 or
 
-```python
+```text
 AugmentedRequirement
 ```
 
----
+### Output
 
-## Output
-
-```python
+```text
 List[Intent]
 ```
 
----
-
-## Responsibilities
+### Responsibilities
 
 - Requirement understanding
 - Intent extraction
-- Intent validation
 - Intent normalization
+- Intent validation
+- Business interpretation
 
----
-
-## Example
-
-Requirement:
+### Current Development Status
 
 ```text
-Login to application.
-Search for iPhone.
-Add item to cart.
-Logout.
-```
-
-Output:
-
-```python
-[
-    LoginIntent,
-    SearchIntent,
-    AddToCartIntent,
-    LogoutIntent
-]
+Phase 1 Foundation
 ```
 
 ---
 
-## Folder
+## ReviewAgent
+
+### Purpose
+
+Validate generated artifacts.
+
+### Inputs
 
 ```text
-intent_generator
-│
-├── contracts
-├── prompts
-├── skills
-└── tests
-```
-
----
-
-# StepGeneratorAgent
-
-## Purpose
-
-Generate executable browser steps.
-
-This is the most intelligence-heavy component of the system.
-
----
-
-## Input
-
-```python
 List[Intent]
 ```
 
----
+or
 
-## Output
-
-```python
+```text
 List[ExecutedStep]
 ```
 
+### Output
+
+```text
+ReviewResult
+```
+
+### Responsibilities
+
+- Intent review
+- Step review
+- Quality scoring
+- Recommendation generation
+- Validation feedback
+
+### Important Rule
+
+ReviewAgent does not modify artifacts.
+
+ReviewAgent only:
+
+- Evaluates
+- Scores
+- Recommends
+
 ---
 
-## Responsibilities
+## StepAgent
+
+### Purpose
+
+Transform approved intents into executable automation plans.
+
+### Input
+
+```text
+ApprovedIntents
+```
+
+### Output
+
+```text
+List[ExecutedStep]
+```
+
+### Responsibilities
 
 - Navigation planning
-- DOM analysis
-- Screenshot analysis
+- Workflow planning
 - Locator discovery
-- Browser interaction
-- Validation discovery
+- Assertion discovery
+- Execution planning
 
----
-
-## Tools
-
-Owns:
+### Tool Ownership
 
 ```text
-Playwright Tool
+Browser Automation Tools
 ```
 
----
+### Browser Capabilities
 
-## Allowed
+- Navigation
+- DOM inspection
+- Screenshot capture
+- Locator discovery
+- Locator validation
+
+Browser access must use the service boundary:
 
 ```text
-Browser navigation
-
-Screenshot capture
-
-DOM extraction
-
-Playwright interaction
+StepAgent
+    ↓
+BrowserAutomationService
+    ↓
+Playwright
 ```
+
+### Important Rule
+
+StepAgent owns browser interaction.
+
+ScriptAgent must never interact directly with browsers.
 
 ---
 
-## Not Allowed
+## ScriptAgent
+
+### Purpose
+
+Generate framework-specific automation assets.
+
+### Input
 
 ```text
-Framework rendering
+ApprovedExecutionPlan
 ```
 
----
+Intent actions apply only to the business gate; step actions apply only to the technical gate. If approval is rejected or cannot be reached, the artifact is controlled as rejected and must not be passed to the next agent.
 
-## Example Output
+IntentAgent evaluation is first-class and uses the platform evaluation framework, initially DeepEval, with coverage, relevance, completeness, correctness, and structured-output validity checks.
 
-```python
-ExecutedStep(
-    intent="Login",
-    action="CLICK",
-    confidence=0.92
-)
-```
-
----
-
-## Folder
+### Output
 
 ```text
-step_generator
-│
-├── contracts
-├── prompts
-├── skills
-├── tools
-├── services
-└── tests
+Automation Assets
 ```
 
----
+### Responsibilities
 
-# ReviewAgent
+- Framework rendering
+- Artifact generation
+- Template generation
 
-## Purpose
+### Important Rule
 
-Review generated steps before human intervention.
+ScriptAgent is a renderer.
 
----
+ScriptAgent:
 
-## Input
-
-```python
-List[ExecutedStep]
-```
-
----
-
-## Output
-
-```python
-ReviewReport
-```
+- Does not open browsers
+- Does not inspect DOM
+- Does not analyze screenshots
+- Does not discover locators
 
 ---
 
-## Review Areas
+## Quality Gate Architecture
 
-### Assertions
+### Review Gate 1
 
-Detect:
+Business Quality Gate.
 
 ```text
-Missing Assertions
+KnowledgeAgent
+        ↓
 
-Weak Assertions
+IntentAgent
+        ↓
 
-Duplicate Assertions
-```
-
----
-
-### Locators
-
-Detect:
-
-```text
-Weak XPath
-
-Dynamic IDs
-
-Fragile Selectors
-```
-
----
-
-### Confidence
-
-Detect:
-
-```text
-Low Confidence Steps
-```
-
----
-
-### Navigation Issues
-
-Detect:
-
-```text
-Missing Steps
-
-Duplicate Steps
-
-Ambiguous Actions
-```
-
----
-
-## Folder
-
-```text
-review_agent
-│
-├── contracts
-├── prompts
-├── skills
-└── tests
-```
-
----
-
-# Human In The Loop
-
-## Trigger
-
-Human review happens after:
-
-```text
 ReviewAgent
+        ↓
+
+Intent Quality Score
+        ↓
+
+Autonomous Improvement Loop
+        ↓
+
+Conditional HITL
+        ↓
+
+ApprovedIntents
 ```
 
 ---
 
-## User Actions
+### Review Gate 2
+
+Technical Quality Gate.
 
 ```text
-Approve
+StepAgent
+      ↓
 
-Reject
+ReviewAgent
+      ↓
 
-Modify
+Step Quality Score
+      ↓
 
-Add Step
+Autonomous Improvement Loop
+      ↓
 
-Delete Step
-```
+Conditional HITL
+      ↓
 
----
-
-## Output
-
-```python
 ApprovedExecutionPlan
 ```
 
 ---
 
-# ScriptAgent
+## MainAgent Autonomous Quality Loop
 
-## Purpose
+```text
+Generate Output
+        ↓
 
-Renderer.
+ReviewAgent
+        ↓
 
-ScriptAgent converts approved execution plans into framework-specific assets.
+Quality Score
+        ↓
+
+Threshold Met?
+
+YES
+  ↓
+Continue Workflow
+
+NO
+  ↓
+Improve Output
+  ↓
+Review Again
+```
+
+MainAgent repeats improvement cycles until:
+
+- Target quality achieved
+- Maximum iterations reached
+- Improvement stalls
+- Timeout or resource budget is reached
+- HITL policy triggered
+
+The initial candidate counts as the first evaluation. The best valid candidate must be retained, and a later lower-scoring candidate must not replace it. Review loops use stage-specific thresholds and limits; KnowledgeAgent retrieval limits are configured separately.
+
+Example stage configuration:
+
+```yaml
+intent_review:
+  score_threshold: 0.90
+  max_iterations: 5
+  min_improvement_delta: 0.02
+
+step_review:
+  score_threshold: 0.90
+  max_iterations: 5
+  min_improvement_delta: 0.02
+```
+
+Review scores and thresholds use the normalized `0.0–1.0` scale. The retrieval policy is independent:
+
+```yaml
+knowledge_retrieval:
+  maximum_iterations: 3
+  minimum_context_relevance_score: 0.85
+```
 
 ---
 
-## Important Rule
+## HITL Policy
 
-ScriptAgent is NOT a browser automation agent.
+Supported modes:
 
-ScriptAgent:
+- Disabled
+- Auto
+- Always
+- Compliance (Future)
 
-❌ does not open browsers
+### Human Actions
 
-❌ does not inspect DOM
+- Approve
+- Reject
+- Modify
+- Add
+- Remove
 
-❌ does not analyze screenshots
+### Output
+
+```text
+ApprovedIntents
+```
+
+for the business quality gate, or:
+
+```text
+ApprovedExecutionPlan
+```
+
+---
+
+## Skill Ownership
+
+```text
+KnowledgeAgent
+    └── Knowledge Skills
+
+IntentAgent
+    └── Intent Skills
+
+ReviewAgent
+    └── Review Skills
+
+StepAgent
+    └── Execution Skills
+
+ScriptAgent
+    └── Renderer Skills
+```
+
+---
+
+## Tool Ownership
+
+
+| Tool Category       | Owner          |
+| ------------------- | -------------- |
+| Browser Tools       | StepAgent      |
+| Knowledge Tools     | KnowledgeAgent |
+| Evaluation Tools    | ReviewAgent    |
+| Rendering Tools     | ScriptAgent    |
+| Persistence Tools   | MainAgent      |
+| Observability Tools | Platform       |
+
+The persistence strategy is PostgreSQL with PGVector for workflow artifacts, checkpoints, request history, evaluation results, knowledge retrieval, and future semantic memory.
+
+---
+
+## Future Agent Evolution
+
+Future decomposition may introduce:
+
+```text
+IntentReviewAgent
+
+StepReviewAgent
+
+SecurityReviewAgent
+
+GovernanceReviewAgent
+```
+
+This decomposition should occur only when ReviewAgent becomes difficult to scale or maintain.
+
+---
+
+## Final Principle
+
+```text
+MainAgent Orchestrates
+
+KnowledgeAgent Enhances
+
+IntentAgent Understands
+
+ReviewAgent Validates
+
+StepAgent Plans
+
+ScriptAgent Renders
+```
+
+Each agent owns a single responsibility.
+
+No agent should perform responsibilities owned by another agent.

@@ -14,7 +14,7 @@ The platform ultimately intends to use DeepAgent orchestration.
 
 However the first implementation contains only:
 
-- IntentGeneratorAgent
+- IntentAgent
 
 There is no delegation requirement yet.
 
@@ -26,7 +26,7 @@ Start with:
 create_agent()
 ```
 
-for the IntentGeneratorAgent.
+for the IntentAgent.
 
 Introduce:
 
@@ -41,7 +41,7 @@ only when multiple collaborating agents exist.
 Phase 1:
 
 ```text
-IntentGeneratorAgent
+IntentAgent
 ```
 
 Phase 2:

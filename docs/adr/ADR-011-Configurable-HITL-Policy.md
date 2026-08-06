@@ -226,14 +226,22 @@ Organization policy requires mandatory approval.
 ```yaml
 hitl_mode: auto
 
-intent_score_threshold: 0.90
+intent_review:
+  score_threshold: 0.90
+  max_iterations: 5
+  min_improvement_delta: 0.02
 
-step_score_threshold: 0.90
+step_review:
+  score_threshold: 0.90
+  max_iterations: 5
+  min_improvement_delta: 0.02
 
-max_iterations: 5
-
-min_improvement_delta: 0.02
+knowledge_retrieval:
+  maximum_iterations: 3
+  minimum_context_relevance_score: 0.85
 ```
+
+The retrieval settings bound KnowledgeAgent context refinement and are independent of the Intent and Step review settings. The initial candidate counts as the first review evaluation. When a review loop terminates without meeting its threshold, the best valid candidate is retained and the workflow invokes HITL or returns a controlled rejection according to policy.
 
 ---
 

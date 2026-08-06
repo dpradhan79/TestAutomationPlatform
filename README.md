@@ -105,11 +105,12 @@ while remaining:
 
 ### Platform Overview
 
-- Vision
+- #vision
 - #problem-statement
-- #design-principles
+- Design Principles
 - #documentation-strategy
-- Current Development Focus
+- #current-project-status
+- #current-development-focus
 - #platform-maturity-model
 
 ### Platform Architecture
@@ -117,39 +118,52 @@ while remaining:
 - Current Architecture
 - #target-architecture
 - #agent-interaction-model
-- [End-To-End Workflow
-- [Agent Responsibilities](#agententic Platform Features
-- [Dual-review-gate-architecture
-- [Autonomous-quality-improvement-loop
-- [configurable-hitl-policy
-- [Quality-scoring-framework
+- #end-to-end-workflow
+- #agent-responsibilities
+
+### Quality And Governance
+
+- #dual-review-gate-architecture
+- #autonomous-quality-improvement-loop
+- #configurable-hitl-policy
+- #quality-scoring-framework
 
 ### Agent Framework
 
+- #architecture-principles
 - #agent-design-principles
-- [skill-architecture
-- [Skill Lifecycle- #agent-contract-strategy
+- #skill-architecture
+- #skill-lifecycle
+- #agent-contract-strategy
 - #agent-internal-architecture
 
 ### Context And Memory
 
 - #context-management-strategy
-- [Memory Strategy
+- #memory-strategy
 - #checkpoint-strategy
-- [Persistence Strategy](#persistence-strategy #tool-architecture
+- #persistence-strategy
+
+### Platform Infrastructure
+
+- Tool Architecture
 - #renderer-architecture
-- [LLM Strategy
-- [Observability Strategy](#observorm Evaluation Plan](#platform-entation
+- #llm-strategy
+- #prompt-management-strategy
+- #observability-strategy
+- #platform-evaluation-plan
+
+### Implementation
+
 - #repository-structure
 - #planned-phases
 
 ### Governance
 
-- [Architecture-decision-records
-- [Architecture-documentation-roadmap
+- #architecture-documentation-roadmap
+- Architecture Decision Records
 - #future-enhancements
-- [Canonical-architecture-document
-
+- #canonical-architecture-document
 ---
 
 ## Vision
@@ -384,6 +398,125 @@ Enterprise Governance
 Security
 Compliance
 Multi-Tenancy
+```
+
+---
+
+## Current Project Status
+
+The project is currently in the Architecture and Design phase.
+
+No production implementation has started yet.
+
+The current objective is to:
+
+- Finalize platform architecture
+- Finalize agent boundaries
+- Finalize repository structure
+- Finalize skill framework
+- Finalize persistence strategy
+- Finalize governance model
+- Finalize implementation roadmap
+
+### Current Stage
+
+```text
+Architecture Discovery
+        ↓
+
+Architecture Definition
+        ↓
+
+Repository Planning
+        ↓
+
+Implementation Planning
+        ↓
+
+Phase 1 Development
+```
+
+### Completed
+
+- High-Level Platform Architecture
+- Multi-Agent Architecture Definition
+- Agent Responsibility Definition
+- Skill Architecture Definition
+- Context Management Strategy
+- Memory Strategy
+- Persistence Strategy
+- Governance Strategy
+- Repository Blueprint
+- Phase Roadmap
+- ADR Planning
+
+### In Progress
+
+- Architecture Refinement
+- README Architecture Handbook
+- ADR Authoring
+- Implementation Planning
+
+### Not Yet Started
+
+- IntentAgent Development
+- KnowledgeAgent Development
+- MainAgent Development
+- ReviewAgent Development
+- StepAgent Development
+- ScriptAgent Development
+
+### Next Milestone
+
+```text
+Phase 1
+
+IntentAgent Foundation
+```
+---
+
+### Development Progress
+
+#### Current Phase
+
+```text
+Phase 1 of 8
+IntentAgent Foundation
+```
+
+#### Phase Roadmap
+
+```text
+[✓] Architecture & Design
+[➜] Phase 1 - IntentAgent Foundation
+[ ] Phase 2 - KnowledgeAgent
+[ ] Phase 3 - MainAgent (DeepAgent)
+[ ] Phase 4 - Intent Review + HITL
+[ ] Phase 5 - StepAgent
+[ ] Phase 6 - Step Review + HITL
+[ ] Phase 7 - ScriptAgent
+[ ] Phase 8 - Enterprise Platform
+```
+
+#### Current Objective
+
+```text
+Establish all reusable platform standards through IntentAgent:
+
+- Agent Architecture
+- Skill Framework
+- Contract Framework
+- Context Management
+- FastAPI Integration
+- Evaluation Framework
+- Observability Framework
+- Docker Deployment
+```
+
+#### Next Milestone
+
+```text
+Phase 2 – KnowledgeAgent
 ```
 
 ---
@@ -741,7 +874,7 @@ MainAgent is the orchestration layer of the platform.
 
 ### Planned Runtime
 
-```python
+```text
 create_deep_agent(...)
 ```
 
@@ -797,6 +930,26 @@ AugmentedRequirement
 - Knowledge Validation
 - Context Assembly
 
+### Bounded Retrieval Improvement Loop
+
+Knowledge retrieval may be refined when the retrieved context does not meet the configured relevance threshold. This loop is separate from the downstream Intent and Step quality-improvement loops.
+
+The retrieval policy is configurable and must remain finite:
+
+```yaml
+knowledge_retrieval:
+  maximum_iterations: 3
+  minimum_context_relevance_score: 0.85
+```
+
+For each iteration, KnowledgeAgent may refine the query or retrieval parameters and retrieve context again. The loop terminates when:
+
+- Context relevance is at least `0.85`.
+- `maximum_iterations` is reached.
+- A configured timeout or resource budget is reached.
+
+When the threshold is not achieved, KnowledgeAgent returns the best available context with an explicit retrieval-quality result or requests escalation according to workflow policy. It must not invoke an unbounded self-retry loop.
+
 ---
 
 ## IntentAgent
@@ -819,7 +972,7 @@ AugmentedRequirement
 
 ### Outputs
 
-```python
+```text
 Intent[]
 ```
 
@@ -858,12 +1011,12 @@ Intent[]
 or
 
 ```text
-ExecutedSteps[]
+List[ExecutedStep]
 ```
 
 ### Outputs
 
-```python
+```text
 ReviewResult
 ```
 
@@ -900,8 +1053,8 @@ ApprovedIntents
 
 ### Outputs
 
-```python
-ExecutedSteps[]
+```text
+List[ExecutedStep]
 ```
 
 ### Responsibilities
@@ -1025,7 +1178,7 @@ StepAgent
       │
       ▼
 
-ExecutedSteps[]
+List[ExecutedStep]
       │
       ▼
 
@@ -1161,7 +1314,84 @@ This continues until:
 - Improvement stalls
 - HITL policy requires user involvement
 
+The initial candidate counts as the first evaluation. The loop is finite: it must stop before another improvement attempt when the configured maximum, stall threshold, timeout, or resource budget is reached. The best valid candidate is retained if a later attempt scores lower.
+
 ---
+
+### MainAgent Orchestration Loop
+
+```text
+Generate Output
+       │
+       ▼
+
+ReviewAgent
+       │
+       ▼
+
+Quality Score
+       │
+       ▼
+
+Threshold Met?
+
+YES
+  │
+  ▼
+
+Continue Workflow
+
+NO
+  │
+  ▼
+
+Improve Output
+
+  │
+  ▼
+
+Review Again
+```
+
+This loop represents the core operating model of MainAgent (DeepAgent).
+
+MainAgent continues autonomous refinement until:
+
+- Target quality threshold achieved
+- Maximum iteration limit reached
+- Improvement becomes insignificant
+- HITL policy triggers human involvement
+---
+
+### Finite Improvement Loop Contract
+
+Each Intent and Step quality-review loop is bounded by configuration. The initial generated artifact counts as the first candidate evaluation. A loop must not begin another improvement attempt when its configured maximum has been reached.
+
+```yaml
+intent_review:
+  score_threshold: 0.90
+  max_iterations: 5
+  min_improvement_delta: 0.02
+
+step_review:
+  score_threshold: 0.90
+  max_iterations: 5
+  min_improvement_delta: 0.02
+```
+
+The loop continues only while all of the following are true:
+
+- The score is below the stage threshold.
+- Iterations remain.
+- Improvement has not stalled.
+- The timeout and resource budgets have not been exceeded.
+- HITL is not required by policy.
+
+The loop terminates when any one of those conditions is false. The best valid candidate and its review result must be retained; an unsuccessful later attempt must not replace a higher-scoring candidate. If the threshold is still not achieved after termination, the stage escalates to HITL or returns a controlled rejection according to the configured policy.
+
+`min_improvement_delta` is measured against the previous best score. Scores and thresholds use the normalized `0.0–1.0` scale in contracts and configuration; reports may display the same values as percentages.
+
+Retrieval termination and quality-review termination are independent: KnowledgeAgent uses its retrieval policy before downstream generation, while ReviewAgent/MainAgent use stage-specific policies after generation.
 
 ### Autonomous Improvement Principles
 
@@ -1306,6 +1536,34 @@ Compliance rules require approval.
 Future capability.
 
 ---
+
+### Recommended Platform Thresholds
+
+```yaml
+hitl_mode: auto
+
+intent_review:
+  score_threshold: 0.90
+  max_iterations: 5
+  min_improvement_delta: 0.02
+
+step_review:
+  score_threshold: 0.90
+  max_iterations: 5
+  min_improvement_delta: 0.02
+```
+
+### Threshold Interpretation
+
+| Score Range | Outcome |
+|------------|----------|
+| 0.95 - 1.00 | Excellent |
+| 0.90 - 0.94 | Acceptable |
+| 0.80 - 0.89 | Improvement Recommended |
+| Below 0.80 | Requires Improvement |
+
+---
+
 
 ## Quality Scoring Framework
 
@@ -1628,6 +1886,75 @@ Ownership Model:
 This separation ensures that the platform remains scalable, observable, auditable, and enterprise-ready.
 
 ---
+## Architecture Principles
+
+These principles govern all current and future architectural decisions.
+
+### AP-001 Agent First
+
+Business capabilities should be implemented as agents.
+
+---
+
+### AP-002 Review Before Progression
+
+Generated outputs must be reviewed before becoming inputs to downstream agents.
+
+---
+
+### AP-003 Quality Driven
+
+Quality scores drive workflow progression decisions.
+
+---
+
+### AP-004 Skill Driven
+
+Business behavior should reside within skills, not source code.
+
+---
+
+### AP-005 Contract Driven
+
+Agent communication must use strongly typed contracts.
+
+---
+
+### AP-006 Autonomy Before HITL
+
+The platform should attempt autonomous improvement before requesting human intervention.
+
+---
+
+### AP-007 Persistence By Default
+
+Important workflow artifacts must be persisted.
+
+---
+
+### AP-008 Observability By Default
+
+Every significant action must be traceable.
+
+---
+
+### AP-009 LLM Agnostic
+
+Business capabilities must remain independent of model providers.
+
+---
+
+### AP-010 Enterprise Ready
+
+Every architectural decision should consider:
+
+- Scale
+- Governance
+- Auditability
+- Security
+- Enterprise Adoption
+---
+
 ## Agent Design Principles
 
 All agents within the platform must adhere to a common set of architectural principles.
@@ -1681,7 +2008,7 @@ Unstructured Text
 
 Instead they exchange:
 
-```python
+```text
 Pydantic Models
 ```
 
@@ -1721,19 +2048,19 @@ Agents must never be tightly coupled to a specific provider.
 
 Avoid:
 
-```python
+```text
 AzureOpenAI(...)
 ```
 
 Prefer:
 
-```python
+```text
 BaseChatModel
 ```
 
 or
 
-```python
+```text
 init_chat_model(...)
 ```
 
@@ -3368,13 +3695,13 @@ Mistral
 
 Agents must consume:
 
-```python
+```text
 BaseChatModel
 ```
 
 or
 
-```python
+```text
 init_chat_model(...)
 ```
 
@@ -3928,6 +4255,10 @@ TestAutomationPlatform
     │   ├── context
     │   ├── memory
     │   ├── checkpoints
+    │   ├── scoring
+    │   ├── governance
+    │   ├── skills
+    │   ├── workflows
     │   └── security
     │
     ├── agents
@@ -3969,6 +4300,18 @@ Establish the foundational implementation patterns that will be reused by every 
 - Structured Outputs
 - Pydantic Contracts
 - Agent Lifecycle Standards
+
+#### Contract-First Implementation
+
+Phase 1 begins with versioned Pydantic v2 contracts before agent runtime wiring. The initial contract set is:
+
+```text
+Requirement
+Intent
+IntentResponse
+```
+
+`IntentAgent` consumes `Requirement` and returns a validated `IntentResponse` containing `Intent[]`. The same contract-first approach will be extended to `AugmentedRequirement`, `ReviewResult`, `ApprovedIntents`, `List[ExecutedStep]`, `ApprovedExecutionPlan`, and generated artifacts in later phases. `create_agent()` must receive and return these typed models rather than unvalidated dictionaries.
 
 #### Skill Framework
 
@@ -4137,7 +4480,7 @@ Generate execution-ready automation plans.
 #### Deliverable
 
 ```text
-ExecutedSteps[]
+List[ExecutedStep]
 ```
 
 ---
@@ -4195,7 +4538,6 @@ Generate framework-specific automation assets.
 ```text
 Automation Assets
 ```
-
 ---
 
 ### Phase 8 - Enterprise Platform
@@ -4215,6 +4557,71 @@ Enterprise-readiness.
 - AKS
 - Azure Container Apps
 - KEDA
+
+---
+
+### Phase Exit Criteria
+
+A phase should only be considered complete when its exit criteria are satisfied.
+
+#### Phase 1 Exit Criteria
+
+- IntentAgent implemented
+- create_agent() operational
+- SkillLoader implemented
+- PromptBuilder implemented
+- Structured Outputs operational
+- FastAPI operational
+- Docker deployment operational
+- Baseline DeepEval suite available
+
+#### Phase 2 Exit Criteria
+
+- Knowledge ingestion operational
+- Chunking implemented
+- Embedding generation implemented
+- PGVector retrieval operational
+- Requirement augmentation operational
+
+#### Phase 3 Exit Criteria
+
+- MainAgent operational
+- create_deep_agent() operational
+- Agent delegation operational
+- Routing operational
+- Checkpointing operational
+
+#### Phase 4 Exit Criteria
+
+- IntentReview workflow operational
+- Intent scoring operational
+- HITL approval operational
+
+#### Phase 5 Exit Criteria
+
+- StepAgent operational
+- Locator discovery operational
+- Assertion discovery operational
+- Execution planning operational
+
+#### Phase 6 Exit Criteria
+
+- Step review operational
+- Technical approval workflow operational
+- Technical score generation operational
+
+#### Phase 7 Exit Criteria
+
+- ScriptAgent operational
+- Minimum two renderers implemented
+- Artifact generation operational
+
+#### Phase 8 Exit Criteria
+
+- Azure deployment operational
+- Enterprise governance operational
+- Authentication operational
+- Audit framework operational
 
 ---
 
@@ -4299,6 +4706,24 @@ Potential future capabilities:
 - GovernanceAgent
 - MemoryAgent
 - DeploymentAgent
+- IntentReviewAgent
+- StepReviewAgent
+
+### Review Architecture Evolution
+
+Future versions may decompose ReviewAgent into:
+
+```text
+IntentReviewAgent
+
+StepReviewAgent
+
+SecurityReviewAgent
+
+GovernanceReviewAgent
+```
+
+This decomposition should occur only when the single ReviewAgent implementation becomes difficult to maintain or scale.
 
 ### Platform Enhancements
 
