@@ -1,0 +1,11 @@
+# Keep documentation and source text normalized across platforms.
+*.md text eol=lf
+*.py text eol=lf
+*.toml text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+*.java text eol=lf
+*.xml text eol=lf
+*.feature text eol=lf
+

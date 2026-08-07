@@ -7,11 +7,14 @@ Always read and follow:
 ```text
 README.md
 AGENTS.md
+.github/instructions/*.md
 ```
 
 README.md is the canonical architecture document.
 
 AGENTS.md defines agent responsibilities and ownership boundaries.
+
+At the start of every task, read `README.md` first, then `AGENTS.md`, then only the applicable scoped instruction files. Inspect the actual working-tree structure before assuming that a planned component exists; this repository is currently an architecture scaffold.
 
 ---
 
@@ -19,12 +22,14 @@ AGENTS.md defines agent responsibilities and ownership boundaries.
 
 This repository follows:
 
-- DeepAgent First Architecture
+- DeepAgent Target Architecture with create_agent-first progression
 - Agent Ownership Principle
 - Skill Driven Design
 - Renderer Pattern
 - HITL Workflow
 - Ollama First Development Strategy
+
+The first complete vertical slice is the IntentAgent workflow through ScriptAgent rendering Java + Selenium + TestNG automation assets. DeepAgent orchestration and additional renderers are future extensions.
 
 ---
 
@@ -102,6 +107,8 @@ Requirements:
 - Structured Logging
 - Unit Tests
 - Separation of Concerns
+
+Platform implementation is Python-based and follows the repository runtime configuration. Generated automation assets initially target Java + Selenium + TestNG and must remain separate from the Python agent runtime.
 
 ---
 

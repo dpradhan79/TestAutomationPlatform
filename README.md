@@ -11,7 +11,7 @@ Production-grade Agentic AI Platform for transforming business requirements into
 | ------------------------------- | --------------------------------- |
 | Document Type                   | Architecture Handbook             |
 | Project                         | TestAutomationPlatform            |
-| Status                          | Active Development                |
+| Status                          | Architecture and Design           |
 | Current Phase                   | Phase 1 – IntentAgent Foundation |
 | Architecture Style              | Agentic AI Platform               |
 | Current Runtime                 | create_agent()                    |
@@ -68,7 +68,7 @@ while remaining:
 
 | Area                | Status      |
 | ------------------- | ----------- |
-| IntentAgent         | In Progress |
+| IntentAgent         | Phase 1 Foundation |
 | KnowledgeAgent      | Planned     |
 | MainAgent           | Planned     |
 | ReviewAgent         | Planned     |
@@ -513,6 +513,8 @@ Establish all reusable platform standards through IntentAgent:
 - Docker Deployment
 ```
 
+The first complete vertical slice is the IntentAgent workflow through a Java + Selenium + TestNG automation artifact. ScriptAgent remains a renderer boundary so additional framework renderers can be added later without changing the IntentAgent contract.
+
 #### Next Milestone
 
 ```text
@@ -871,6 +873,8 @@ No agent should perform responsibilities owned by another agent.
 ### Purpose
 
 MainAgent is the orchestration layer of the platform.
+
+Introduce `create_deep_agent(...)` only after at least two collaborating agents are independently ready on `create_agent()`. Until that readiness gate is met, keep the runtime single-agent and use `create_agent()` for each leaf-agent implementation.
 
 ### Planned Runtime
 
@@ -3605,21 +3609,21 @@ HOW TO REPRESENT IT
 
 ### Renderer Catalog
 
-Initial Renderers:
+Initial Renderer:
 
 ```text
-Selenium TestNG
-
-Selenium Cucumber
-
-Playwright Python
-
-Playwright TypeScript
+Java + Selenium + TestNG
 ```
 
 Future Renderers:
 
 ```text
+Selenium Cucumber
+
+Playwright Python
+
+Playwright TypeScript
+
 Robot Framework
 
 Karate
@@ -4522,19 +4526,7 @@ Objective:
 
 Generate framework-specific automation assets.
 
-#### Initial Renderers
-
-- Selenium TestNG
-- Selenium Cucumber
-- Playwright Python
-- Playwright TypeScript
-
-#### Future Renderers
-
-- Robot Framework
-- Karate
-- REST Assured
-- Appium
+The initial renderer and future renderer catalog are defined in the [Renderer Catalog](#renderer-catalog) above. The first implementation target is Java + Selenium + TestNG; additional frameworks remain future renderers.
 
 #### Deliverable
 

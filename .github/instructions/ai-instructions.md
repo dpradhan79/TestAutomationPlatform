@@ -1,98 +1,66 @@
 # AI Instructions
-
 ## Frameworks
-
 Preferred:
-
 - LangChain
 - LangGraph
 - DeepAgents
 - LangSmith
-
 ---
-
 ## Models
-
 Use:
-
 ```python
 init_chat_model(...)
 ```
-
 Return:
-
 ```python
 BaseChatModel
 ```
-
 Agents should be model-agnostic.
-
 ---
-
 ## Token Optimization
-
-IntentGeneratorAgent:
-
+IntentAgent:
 Input:
-
 ```text
 Requirement
 ```
-
 Output:
-
 ```python
-Intent[]
+IntentResponse
 ```
-
 ---
-
-StepGeneratorAgent:
-
+StepAgent:
 Input:
-
 ```python
-Intent[]
+ApprovedIntents
 ```
-
 Output:
-
 ```python
-ExecutedStep[]
+List[ExecutedStep]
 ```
-
 ---
-
 ReviewAgent:
-
 Input:
-
 ```python
-ExecutedStep[]
+List[Intent]
 ```
-
+or
+```python
+List[ExecutedStep]
+```
 Output:
-
 ```python
-ReviewReport
+ReviewResult
 ```
-
 ---
-
 ScriptAgent:
-
 Input:
-
 ```python
 ApprovedExecutionPlan
 ```
-
 Output:
-
 ```python
 GeneratedArtifact
 ```
-
+The first renderer target is Java + Selenium + TestNG. ScriptAgent renders only from an `ApprovedExecutionPlan`; it does not perform browser automation or locator discovery.
 ---
-
 Never pass full workflow context to every agent.

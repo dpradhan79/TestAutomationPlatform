@@ -62,6 +62,28 @@ Phase 1 – IntentAgent Foundation
 
 ---
 
+The repository is currently an architecture and design scaffold. Treat the implementation described in this document and `README.md` as the target for the current phase unless the corresponding source files exist in the working tree.
+
+Phase 1 implementation scope is one complete vertical slice:
+
+```text
+Requirement
+    ↓
+IntentAgent
+    ↓
+Approved intent contract
+    ↓
+StepAgent execution plan
+    ↓
+ScriptAgent
+    ↓
+Java + Selenium + TestNG automation assets
+```
+
+The first runtime should use `create_agent()`. Introduce `create_deep_agent(...)` only after at least two collaborating agents are independently ready on `create_agent()` and there is a real delegation requirement.
+
+---
+
 ## Target Agent Hierarchy
 
 ```text
@@ -78,7 +100,7 @@ MainAgent orchestrates workflows.
 
 Subagents own business capabilities.
 
-The current Phase 1 runtime is `FastAPI → IntentAgent → create_agent()`. `MainAgent (DeepAgent)` is the target orchestration architecture introduced after the leaf-agent contracts and runtime patterns are established.
+The Phase 1 target runtime is `FastAPI → IntentAgent → create_agent()`. `MainAgent (DeepAgent)` is future orchestration architecture introduced after the leaf-agent contracts and runtime patterns are established; it is not assumed to exist in the current scaffold.
 
 The current development model runtime is Ollama. Model access remains provider-agnostic through `BaseChatModel` obtained via `init_chat_model(...)`.
 
@@ -399,6 +421,8 @@ IntentAgent evaluation is first-class and uses the platform evaluation framework
 ```text
 Automation Assets
 ```
+
+The first renderer target is Java + Selenium + TestNG. ScriptAgent only transforms an `ApprovedExecutionPlan`; it does not discover locators, inspect browsers, or execute tests. Other framework renderers may be added later behind the same renderer boundary.
 
 ### Responsibilities
 
