@@ -17,4 +17,5 @@ class LLMConfig(BaseSettings):
 
 @lru_cache
 def get_llm_config() -> LLMConfig:
+    print(f'Loading LLMConfig from environment variables...default variables are returned as fallback')
     return LLMConfig()
