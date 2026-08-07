@@ -1,9 +1,25 @@
 [project]
-name = "testscriptgeneratoragent"
+name = "TestAutomationPlatform"
 version = "0.1.0"
-description = "Add your description here"
+description = "Production-grade Agentic AI Platform for transforming business requirements into executable test automation assets using autonomous, quality-driven, multi-agent workflows."
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "deepagents>=0.7.1",
+    "langchain>=1.3.14",
+    "langchain-community>=0.4.2",
+    "langchain-core>=1.5.3",
+    "langgraph>=1.2.10",
+    "pydantic>=2.13.4",
+    "pydantic-settings>=2.15.0",
+]
+
+[dependency-groups]
+dev = [
+    "deepeval>=4.1.5",
+    "mypy>=2.3.0",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.16.2",
 ]
