@@ -5,3 +5,6 @@ def test_llm_config():
     llm_config2 = get_llm_config()
     assert llm_config==llm_config2, f'both LLM Config Instances should be same'
     assert llm_config.llm_model_provider == "ollama"
+
+def test_llm_invoke():
+    pass
