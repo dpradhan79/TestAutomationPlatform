@@ -1,8 +1,12 @@
+import logging
 from functools import lru_cache
 from typing import Optional
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+logger = logging.getLogger(__name__)
 
 class LLMConfig(BaseSettings):
     model_config = SettingsConfigDict(
@@ -20,5 +24,6 @@ class LLMConfig(BaseSettings):
 
 @lru_cache
 def get_llm_config() -> LLMConfig:
-    print(f'Loading LLMConfig from environment variables...default variables are returned as fallback')
+    msg = f'Loading LLMConfig from environment variables...default variables are returned as fallback'
+    logger.info(msg)
     return LLMConfig()

@@ -1,9 +1,14 @@
 import pytest
 
-from src.shared.config.llm_config import get_llm_config
-from src.shared.config.llm_config import LLMConfig
+from shared.llm.config import get_llm_config
+from shared.llm.config import LLMConfig
 from src.shared.llm.factory import get_chat_model
+import logging
 
+@pytest.mark.unit
+@pytest.fixture(scope="session", autouse=True)
+def setup_logging():
+    logging.basicConfig(filename="", level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
 
 @pytest.mark.unit
 def test_get_chat_model_omits_none_fields(monkeypatch):
