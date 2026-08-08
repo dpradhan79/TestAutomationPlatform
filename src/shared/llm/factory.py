@@ -4,23 +4,23 @@ from langchain_core.language_models import BaseChatModel
 from src.shared.config.llm_config import LLMConfig, get_llm_config
 
 
+def _build_init_chat_model_kwargs(config: LLMConfig) -> dict[str, object]:
+    kwargs = {
+        "model": config.llm_model_name,
+        "model_provider": config.llm_model_provider,
+        "temperature": config.llm_model_temperature,
+        "base_url": config.llm_base_url,
+        "max_tokens": config.llm_model_max_tokens,
+        "timeout": config.llm_model_timeout,
+    }
+    return {key: value for key, value in kwargs.items() if value is not None and not (key in ['timeout'] and value==0)}
+
+
 def get_chat_model(
     config: LLMConfig | None = None,
 ) -> BaseChatModel:
 
     if config is None:
-        llm_config = get_llm_config()
-
-        config = LLMConfig(
-            llm_model_provider=llm_config.llm_model_provider,
-            llm_model_name=llm_config.llm_model_name,
-            llm_model_temperature=llm_config.llm_model_temperature,
-            llm_model_max_tokens=llm_config.llm_model_max_tokens
-        )
-
-    return init_chat_model(
-        model=config.llm_model_name,
-        model_provider=config.llm_model_provider,
-        temperature=config.llm_model_temperature
-
-    )
+        config = get_llm_config()
+    kwargs = _build_init_chat_model_kwargs(config)
+    return init_chat_model(**kwargs)

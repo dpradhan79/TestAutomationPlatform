@@ -9,6 +9,7 @@ dependencies = [
     "langchain>=1.3.14",
     "langchain-community>=0.4.2",
     "langchain-core>=1.5.3",
+    "langchain-ollama>=1.1.0",
     "langgraph>=1.2.10",
     "pydantic>=2.13.4",
     "pydantic-settings>=2.15.0",
@@ -21,5 +22,30 @@ dev = [
     "pytest>=9.1.1",
     "pytest-asyncio>=1.4.0",
     "pytest-cov>=7.1.0",
+    "pytest-html>=4.2.0",
     "ruff>=0.16.2",
 ]
+
+[tool.pytest.ini_options]
+addopts = [
+    "-ra",
+    "--junitxml=reports/pytest/junit.xml",
+    "--html=reports/pytest/report.html",
+    "--self-contained-html",
+    "--cov=src",
+    "--cov-report=html:reports/coverage/html",
+    "--cov-report=json:reports/coverage/coverage.json",
+    "--cov-report=term-missing",
+    "--strict-config",
+    "--strict-markers",
+]
+asyncio_mode = "strict"
+console_output_style = "progress"
+markers = [
+    "unit: unit-level tests for isolated components",
+    "integration: integration tests covering interactions across modules or services",
+    "e2e: end-to-end tests covering vertical workflows",
+]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
