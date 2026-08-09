@@ -2,13 +2,19 @@ import pytest
 
 from shared.llm.config import get_llm_config
 from shared.llm.config import LLMConfig
-from src.shared.llm.factory import get_chat_model
+from src.shared.llm.factory import clear_chat_model_cache, get_chat_model
 import logging
 
-@pytest.mark.unit
 @pytest.fixture(scope="session", autouse=True)
 def setup_logging():
     logging.basicConfig(filename="", level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
+
+
+@pytest.fixture(autouse=True)
+def clear_model_cache_between_tests():
+    clear_chat_model_cache()
+    yield
+    clear_chat_model_cache()
 
 @pytest.mark.unit
 def test_get_chat_model_omits_none_fields(monkeypatch):
@@ -37,6 +43,92 @@ def test_get_chat_model_omits_none_fields(monkeypatch):
         "temperature": 0.0,
         "max_tokens": 4096,
     }
+
+
+@pytest.mark.unit
+def test_get_chat_model_reuses_cached_model_for_same_config_object(monkeypatch):
+    init_call_count = 0
+
+    def fake_init_chat_model(**kwargs):
+        nonlocal init_call_count
+        init_call_count += 1
+        return object()
+
+    monkeypatch.setattr("src.shared.llm.factory.init_chat_model", fake_init_chat_model)
+
+    config = LLMConfig(
+        llm_base_url="http://localhost:11434",
+        llm_model_provider="ollama",
+        llm_model_name="qwen3.6",
+        llm_model_temperature=0.0,
+        llm_model_max_tokens=4096,
+        llm_model_timeout=30,
+    )
+
+    model_1 = get_chat_model(config)
+    model_2 = get_chat_model(config)
+
+    assert model_1 is model_2
+    assert init_call_count == 1
+
+
+@pytest.mark.unit
+def test_get_chat_model_rebuilds_when_config_object_changes(monkeypatch):
+    init_call_count = 0
+
+    def fake_init_chat_model(**kwargs):
+        nonlocal init_call_count
+        init_call_count += 1
+        return object()
+
+    monkeypatch.setattr("src.shared.llm.factory.init_chat_model", fake_init_chat_model)
+
+    config = LLMConfig(
+        llm_base_url="http://localhost:11434",
+        llm_model_provider="ollama",
+        llm_model_name="qwen3.6",
+        llm_model_temperature=0.0,
+        llm_model_max_tokens=4096,
+        llm_model_timeout=30,
+    )
+
+    model_1 = get_chat_model(config)
+    config.llm_model_temperature = 0.2
+    model_2 = get_chat_model(config)
+
+    assert model_1 is not model_2
+    assert init_call_count == 2
+
+
+@pytest.mark.unit
+def test_get_chat_model_with_none_uses_cached_singleton_and_rebuilds_on_mutation(monkeypatch):
+    init_call_count = 0
+
+    def fake_init_chat_model(**kwargs):
+        nonlocal init_call_count
+        init_call_count += 1
+        return object()
+
+    singleton_config = LLMConfig(
+        llm_base_url="http://localhost:11434",
+        llm_model_provider="ollama",
+        llm_model_name="qwen3.6",
+        llm_model_temperature=0.0,
+        llm_model_max_tokens=4096,
+        llm_model_timeout=30,
+    )
+
+    monkeypatch.setattr("src.shared.llm.factory.init_chat_model", fake_init_chat_model)
+    monkeypatch.setattr("src.shared.llm.factory.get_llm_config", lambda: singleton_config)
+
+    model_1 = get_chat_model()
+    model_2 = get_chat_model()
+    singleton_config.llm_model_name = "llama3.3"
+    model_3 = get_chat_model()
+
+    assert model_1 is model_2
+    assert model_2 is not model_3
+    assert init_call_count == 2
 
 @pytest.mark.unit
 def test_llm_config():

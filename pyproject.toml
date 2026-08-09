@@ -28,6 +28,8 @@ dev = [
 
 [tool.pytest.ini_options]
 addopts = [
+    "-s",
+    "-v",
     "-ra",
     "--junitxml=reports/pytest/junit.xml",
     "--html=reports/pytest/report.html",

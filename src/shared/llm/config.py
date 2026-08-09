@@ -16,7 +16,7 @@ class LLMConfig(BaseSettings):
 
     llm_base_url: Optional[str] = Field(default=None)
     llm_model_provider: Optional[str] = Field(default="ollama")
-    llm_model_name: str = Field(default="qwen3.6")
+    llm_model_name: str = Field(default="gpt-oss:20b")
     llm_model_temperature: Optional[float] = Field(default=0.0)
     llm_model_max_tokens: Optional[int] = Field(default=4096)
     llm_model_timeout: Optional[int]= Field(default=30)

@@ -1,20 +1,24 @@
 import logging
 import sys
 
-from src.shared.app_logging.config import AppLogging
+from shared.app_logging.config import get_app_logging
 
 
-def init_logger(app_logging: AppLogging | None = None) -> logging.Logger:
-    if app_logging is None:
-        app_logging = AppLogging()
+def init_logger():
+    """Initialize the root logger with a stream handler and a file handler.
 
-    app_logging.log_file.parent.mkdir(parents=True, exist_ok=True)
+    Attaches handlers to the root logger so that all module-level loggers
+    (e.g. ``shared.llm.factory``) propagate their records here automatically.
+    Using a named application logger instead of the root logger would create a
+    separate hierarchy that never receives records from ``logging.getLogger(__name__)``
+    calls in submodules.
+    """
+    app_logging = get_app_logging()
+    logger = logging.getLogger()          # root logger — parent of every module logger
+    logger.setLevel(logging.DEBUG)
 
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.DEBUG)
-
-    if root_logger.handlers:
-        root_logger.handlers.clear()
+    if logger.handlers:
+        logger.handlers.clear()
 
     formatter = logging.Formatter(
         fmt=app_logging.log_format,
@@ -33,8 +37,5 @@ def init_logger(app_logging: AppLogging | None = None) -> logging.Logger:
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(formatter)
 
-    root_logger.addHandler(stdout_handler)
-    root_logger.addHandler(file_handler)
-
-    return root_logger
-
+    logger.addHandler(stdout_handler)
+    logger.addHandler(file_handler)
