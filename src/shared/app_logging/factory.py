@@ -14,7 +14,7 @@ def init_logger():
     calls in submodules.
     """
     app_logging = get_app_logging()
-    logger = logging.getLogger()          # root logger — parent of every module logger
+    logger = logging.getLogger(app_logging.log_app_name)          # root logger — parent of every module logger
     logger.setLevel(logging.DEBUG)
 
     if logger.handlers:

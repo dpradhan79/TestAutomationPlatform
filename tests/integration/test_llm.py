@@ -4,7 +4,7 @@ from shared.llm.factory import get_chat_model
 
 
 @pytest.mark.integration
-#@pytest.mark.skip(reason="Requires a running LLM endpoint; enable explicitly when live integration testing is desired.")
+@pytest.mark.skip(reason="Requires a running LLM endpoint; enable explicitly when live integration testing is desired.")
 def test_llm_invoke_streaming():
     """
     Placeholder test for end-to-end LLM invocation via the factory-produced model.

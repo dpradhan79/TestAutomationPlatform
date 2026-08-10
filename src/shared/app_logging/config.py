@@ -6,6 +6,8 @@ from typing import Any
 
 from pydantic_settings import BaseSettings
 
+def get_root_folder_name():
+    return Path(__file__).resolve().parents[3].stem
 
 class _AppLogging(BaseSettings):
 
@@ -24,11 +26,11 @@ class _AppLogging(BaseSettings):
         log_file (Path): The file path for logging output. If None, logs will be printed to stdout.
         log_file_mode (str): The mode in which the log file is opened (e.g., "w" for write, "a" for append).
     """
-    log_app_name: str = Path(__file__).resolve().parents[3].stem
+    log_app_name: str = Path(__file__).resolve().parents[1].stem
     log_level: int = logging.DEBUG
     log_format: str = "%(asctime)s - %(name)s - %(module)s - %(filename)s:%(lineno)d - %(levelname)s - %(message)s"
     log_date_format: str = "%a, %d %b %Y %H:%M:%S"
-    log_file: Path = Path(__file__).resolve().parents[3] / "logs" / f"{log_app_name}.log"
+    log_file: Path = Path(__file__).resolve().parents[3] / "logs" / f"{get_root_folder_name()}.log"
     log_file_mode: str = "w"
 
     def model_post_init(self, context: Any, /) -> None:
