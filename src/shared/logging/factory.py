@@ -1,7 +1,6 @@
 import logging
 import sys
-
-from shared.app_logging.config import get_app_logging
+from src.shared.logging.config import get_logging_config
 
 
 def init_logger():
@@ -13,7 +12,7 @@ def init_logger():
     separate hierarchy that never receives records from ``logging.getLogger(__name__)``
     calls in submodules.
     """
-    app_logging = get_app_logging()
+    app_logging = get_logging_config()
     logger = logging.getLogger(app_logging.log_app_name)          # root logger — parent of every module logger
     logger.setLevel(logging.DEBUG)
 

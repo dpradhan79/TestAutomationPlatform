@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from shared.tools.coverage_json_to_standalone_html import generate_standalone_report
+from src.shared.tools.coverage_json_to_standalone_html import generate_standalone_report
 
 
 @pytest.mark.unit

@@ -4,7 +4,7 @@ from functools import lru_cache
 from langchain.chat_models import init_chat_model
 from langchain_core.language_models import BaseChatModel
 
-from shared.llm.config import LLMConfig, get_llm_config
+from src.shared.llm.config import LLMConfig, get_llm_config
 logger = logging.getLogger(__name__)
 
 def _build_init_chat_model_kwargs(config: LLMConfig) -> dict[str, object]:

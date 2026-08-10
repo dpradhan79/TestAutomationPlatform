@@ -26,9 +26,9 @@ class _AppLogging(BaseSettings):
         log_file (Path): The file path for logging output. If None, logs will be printed to stdout.
         log_file_mode (str): The mode in which the log file is opened (e.g., "w" for write, "a" for append).
     """
-    log_app_name: str = Path(__file__).resolve().parents[1].stem
+    log_app_name: str = Path(__file__).resolve().parents[2].stem
     log_level: int = logging.DEBUG
-    log_format: str = "%(asctime)s - %(name)s - %(module)s - %(filename)s:%(lineno)d - %(levelname)s - %(message)s"
+    log_format: str = "%(asctime)s - %(name)s - %(funcName)s:%(lineno)d - %(levelname)s - %(message)s"
     log_date_format: str = "%a, %d %b %Y %H:%M:%S"
     log_file: Path = Path(__file__).resolve().parents[3] / "logs" / f"{get_root_folder_name()}.log"
     log_file_mode: str = "w"
@@ -47,5 +47,5 @@ class _AppLogging(BaseSettings):
         log_file_dir.mkdir(parents=True, exist_ok=True)
 
 @lru_cache
-def get_app_logging() -> _AppLogging:
+def get_logging_config() -> _AppLogging:
     return _AppLogging()

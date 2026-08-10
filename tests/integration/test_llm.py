@@ -1,6 +1,6 @@
 import pytest
 
-from shared.llm.factory import get_chat_model
+from src.shared.llm.factory import get_chat_model
 
 
 @pytest.mark.integration
