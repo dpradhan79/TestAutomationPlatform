@@ -1,14 +1,13 @@
 import pytest
 
-from src.shared.llm.config import get_llm_config
-from src.shared.llm.config import LLMConfig
-from src.shared.llm.factory import clear_chat_model_cache, get_chat_model
-import logging
-
-@pytest.fixture(scope="session", autouse=True)
-def setup_logging():
-    logging.basicConfig(filename="", level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
-
+from src.shared.llm.config import (
+    LLMConfig,
+    get_llm_config
+)
+from src.shared.llm.factory import (
+    clear_chat_model_cache,
+    get_chat_model
+)
 
 @pytest.fixture(autouse=True)
 def clear_model_cache_between_tests():

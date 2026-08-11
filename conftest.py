@@ -1,5 +1,5 @@
 import pytest
-from shared.app_logging.factory import init_logger
+from src.shared.logging.factory import init_logger
 
 @pytest.fixture(scope="session", autouse=True)
 def init_logger_fixture():

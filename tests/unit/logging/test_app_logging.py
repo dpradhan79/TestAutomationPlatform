@@ -4,7 +4,7 @@ import logging
 
 import pytest
 
-from src.shared.app_logging.factory import init_logger
+from src.shared.logging.factory import init_logger
 
 
 @pytest.mark.unit
