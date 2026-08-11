@@ -3,7 +3,7 @@ from .intent import Intent
 from .intent_response import IntentResponse
 
 __all__ = [
-    "Requirement",
-    "Intent",
-    "IntentResponse",
+    Requirement,
+    Intent,
+    IntentResponse,
 ]
