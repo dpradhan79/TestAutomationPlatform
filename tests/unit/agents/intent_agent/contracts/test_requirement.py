@@ -3,7 +3,7 @@ from pydantic import ValidationError
 
 from src.agents.intent_agent.contracts import Requirement
 
-@pytest.mark.intent_agent
+@pytest.mark.contract
 @pytest.mark.unit
 def test_requirement_valid():
     requirement = Requirement(
@@ -12,7 +12,7 @@ def test_requirement_valid():
 
     assert requirement.requirement == "Login to Salesforce application"
 
-@pytest.mark.intent_agent
+@pytest.mark.contract
 @pytest.mark.unit
 def test_requirement_empty_string():
     with pytest.raises(ValidationError):
@@ -20,13 +20,13 @@ def test_requirement_empty_string():
             requirement=""
         )
 
-@pytest.mark.intent_agent
+@pytest.mark.contract
 @pytest.mark.unit
 def test_requirement_missing_field():
     with pytest.raises(ValidationError):
         Requirement()
 
-@pytest.mark.intent_agent
+@pytest.mark.contract
 @pytest.mark.unit
 def test_validate_schema():
     requirement = Requirement(

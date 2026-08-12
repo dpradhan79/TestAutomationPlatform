@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, Field
 
 
@@ -24,6 +26,20 @@ class Skill(BaseModel):
     version: str = Field(
         min_length=1,
         description="Skill version."
+    )
+
+    input_contract: Optional[str] = Field(
+        default=None,
+        description="Agent Input"
+    )
+    output_contract: Optional[str] = Field(
+        default=None,
+        description="Agent Output"
+    )
+
+    sections: dict[str, str] = Field(
+        default_factory=dict,
+        description='dictionary for all sections in markdown file helpful for agent'
     )
 
     system: str = Field(

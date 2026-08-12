@@ -47,7 +47,10 @@ markers = [
     "unit: unit-level tests for isolated components",
     "integration: integration tests covering interactions across modules or services",
     "e2e: end-to-end tests covering vertical workflows",
-    "intent_agent: tests related to intent_agent"
+    "intent_agent: tests related to intent_agent",
+    "llm: tests related to llm",
+    "skill: tests relaed to skill",
+    "contract: tests related to contract"
 ]
 pythonpath = ["src"]
 testpaths = ["tests"]

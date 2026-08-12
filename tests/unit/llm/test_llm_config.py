@@ -14,7 +14,7 @@ def clear_model_cache_between_tests():
     clear_chat_model_cache()
     yield
     clear_chat_model_cache()
-
+@pytest.mark.llm
 @pytest.mark.unit
 def test_get_chat_model_omits_none_fields(monkeypatch):
     captured_kwargs = {}
@@ -43,7 +43,7 @@ def test_get_chat_model_omits_none_fields(monkeypatch):
         "max_tokens": 4096,
     }
 
-
+@pytest.mark.llm
 @pytest.mark.unit
 def test_get_chat_model_reuses_cached_model_for_same_config_object(monkeypatch):
     init_call_count = 0
@@ -70,7 +70,7 @@ def test_get_chat_model_reuses_cached_model_for_same_config_object(monkeypatch):
     assert model_1 is model_2
     assert init_call_count == 1
 
-
+@pytest.mark.llm
 @pytest.mark.unit
 def test_get_chat_model_rebuilds_when_config_object_changes(monkeypatch):
     init_call_count = 0
@@ -98,7 +98,7 @@ def test_get_chat_model_rebuilds_when_config_object_changes(monkeypatch):
     assert model_1 is not model_2
     assert init_call_count == 2
 
-
+@pytest.mark.llm
 @pytest.mark.unit
 def test_get_chat_model_with_none_uses_cached_singleton_and_rebuilds_on_mutation(monkeypatch):
     init_call_count = 0
@@ -129,6 +129,7 @@ def test_get_chat_model_with_none_uses_cached_singleton_and_rebuilds_on_mutation
     assert model_2 is not model_3
     assert init_call_count == 2
 
+@pytest.mark.llm
 @pytest.mark.unit
 def test_llm_config():
     """
@@ -144,6 +145,7 @@ def test_llm_config():
     assert llm_config==llm_config2, f'both LLM Config Instances should be same'
     assert llm_config.llm_model_provider == "ollama"
 
+@pytest.mark.llm
 @pytest.mark.unit
 def test_llm_config_init():
     """
@@ -167,6 +169,7 @@ def test_llm_config_init():
     assert llm_config.llm_model_temperature == 0.5
     assert llm_config.llm_model_max_tokens == 100
 
+@pytest.mark.llm
 @pytest.mark.unit
 def test_get_llm_config_vs_init():
     """

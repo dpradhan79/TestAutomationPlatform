@@ -5,7 +5,7 @@ from src.agents.intent_agent.contracts import (
     IntentResponse,
 )
 
-@pytest.mark.intent_agent
+@pytest.mark.contract
 @pytest.mark.unit
 def test_intent_response_with_single_intent():
     response = IntentResponse(
@@ -20,7 +20,7 @@ def test_intent_response_with_single_intent():
     assert len(response.intents) == 1
     assert response.intents[0].intent_no == 1
 
-@pytest.mark.intent_agent
+@pytest.mark.contract
 @pytest.mark.unit
 def test_intent_response_with_multiple_intents():
     response = IntentResponse(
@@ -38,7 +38,7 @@ def test_intent_response_with_multiple_intents():
 
     assert len(response.intents) == 2
 
-@pytest.mark.intent_agent
+@pytest.mark.contract
 @pytest.mark.unit
 def test_intent_response_empty_list():
     response = IntentResponse()

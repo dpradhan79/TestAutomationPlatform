@@ -2,7 +2,7 @@ import pytest
 
 from src.shared.llm.factory import get_chat_model
 
-
+@pytest.mark.llm
 @pytest.mark.integration
 @pytest.mark.skip(reason="Requires a running LLM endpoint; enable explicitly when live integration testing is desired.")
 def test_llm_invoke_streaming():
@@ -22,7 +22,8 @@ def test_llm_invoke_streaming():
         except Exception as e:
             print(f"Error invoking LLM model: {e}")
             assert False, f"LLM invocation failed with exception: {e}"
-
+@pytest.mark.llm
+@pytest.mark.integration
 def test_llm_invoke():
     llm_model = get_chat_model()
     response = llm_model.invoke(input="Tell me something about you")
