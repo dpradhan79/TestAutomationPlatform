@@ -1,9 +1,10 @@
+import logging
 from pathlib import Path
 
 import yaml
 
 from src.shared.ai.skills import Skill
-
+logger = logging.getLogger(__name__)
 
 class SkillLoader:
     """
@@ -13,10 +14,19 @@ class SkillLoader:
 
     def __init__(self, skills_root: Path):
         self._skills_root = skills_root
+        logger.debug(f'SkillLoader initialized for skills_root: {self._skills_root}')
+
 
     def load(self, skill_name: str) -> Skill:
+        try:
+            skill_folder = self._skills_root / skill_name
+        except FileNotFoundError as e:
+            logger.exception(f'File Not Found Error: {e}')
+            raise e
+        except Exception as e:
+            logger.exception(e)
+            raise e
 
-        skill_folder = self._skills_root / skill_name
 
         skill_md = skill_folder / "SKILL.md"
         system_md = skill_folder / "SYSTEM.md"
@@ -32,7 +42,7 @@ class SkillLoader:
 
         sections = self._parse_sections(markdown_body)
 
-        return Skill(
+        skill: Skill = Skill(
             name=metadata["name"],
             description=metadata["description"],
             owner=metadata["owner"],
@@ -44,6 +54,8 @@ class SkillLoader:
             rules=rules_text,
             examples=examples_text,
         )
+        logging.debug(f'Loaded skill: {skill.name} from {skill_folder}')
+        return skill
 
     @staticmethod
     def _parse_frontmatter(content: str) -> tuple[dict, str]:
@@ -65,12 +77,15 @@ class SkillLoader:
             yaml_lines.append(line)
 
         if end_index is None:
-            raise ValueError("Invalid YAML front matter.")
+            err_msg = "Invalid YAML front matter."
+            logger.error(f'{err_msg}')
+            raise ValueError(f"{err_msg}")
 
         metadata = yaml.safe_load("\n".join(yaml_lines))
 
         body = "\n".join(lines[end_index + 1:]).strip()
-
+        logger.debug(f'YAML front matter parsed successfully. Metadata: {metadata}')
+        logger.debug(f'Markdown Content parsed successfully. Content: {body}')
         return metadata, body
 
     @staticmethod
@@ -111,5 +126,5 @@ class SkillLoader:
             sections[current_section] = "\n".join(
                 current_content
             ).strip()
-
+        logger.debug(f'Sections parsed successfully. Sections: {sections}')
         return sections
