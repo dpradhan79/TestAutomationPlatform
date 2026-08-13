@@ -1,10 +1,8 @@
 import pytest
 
-from src.shared.llm.config import (
+from src.shared.llm import (
     LLMConfig,
-    get_llm_config
-)
-from src.shared.llm.factory import (
+    get_llm_config,
     clear_chat_model_cache,
     get_chat_model
 )

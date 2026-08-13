@@ -4,15 +4,15 @@ import logging
 
 import pytest
 
-from src.shared.logging.factory import init_logger
+from src.shared.logging import init_logger, get_logging_config
 
-
+@pytest.mark.logging
 @pytest.mark.unit
 def test_init_logger_configures_stdout_and_file_handlers(tmp_path, capsys) -> None:
-    log_file = tmp_path / "app.log"
+    log_file = get_logging_config().log_file
     init_logger()
 
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger(get_logging_config().log_app_name)
     logger.debug("debug-message")
     logger.info("info-message")
 
@@ -24,10 +24,11 @@ def test_init_logger_configures_stdout_and_file_handlers(tmp_path, capsys) -> No
     assert "info-message" in file_text
     assert "debug-message" in file_text
 
-
+@pytest.mark.logging
 @pytest.mark.unit
 def test_init_logger_handler_levels(tmp_path) -> None:
-    root_logger = init_logger()
+    init_logger()
+    root_logger = logging.getLogger(get_logging_config().log_app_name)
 
     file_handlers = [handler for handler in root_logger.handlers if isinstance(handler, logging.FileHandler)]
     stream_handlers = [

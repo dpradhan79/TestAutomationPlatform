@@ -49,6 +49,7 @@ markers = [
     "e2e: end-to-end tests covering vertical workflows",
     "intent_agent: tests related to intent_agent",
     "llm: tests related to llm",
+    "logging: tests related to logging",
     "skill: tests relaed to skill",
     "contract: tests related to contract"
 ]
