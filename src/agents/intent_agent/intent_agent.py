@@ -21,7 +21,7 @@ class IntentAgent:
 
     def __init__(
         self,
-        skills_root: Path,
+        skills_root: Path = Path(__file__).resolve().parents[0]/"skills",
         skill_name: str = "intent_extraction",
     ):
         self._name = self.__class__.__name__

@@ -1,13 +1,20 @@
 import logging
 
-from src.shared.logging.config import get_logging_config
+from src.shared.logging import get_logging_config
 from src.shared.logging.factory import init_logger
-from src.shared.llm.factory import get_chat_model
+import uvicorn
+from src.api.app import app
 
 init_logger()
 logger = logging.getLogger(get_logging_config().log_app_name)
-logger.info("Starting main.py")
-llm_model = get_chat_model()
-response = llm_model.invoke(input="Tell me something about you")
-print(response.content)
-logger.info("Finished main.py")
+
+if __name__ == "__main__":
+
+    logger.info("Starting main.py")
+    uvicorn.run(
+        app,
+        host="127.0.0.1",
+        port=8000,
+        log_level="debug"
+    )
+    logger.info("Finished main.py")

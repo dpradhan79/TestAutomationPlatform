@@ -15,9 +15,9 @@ from src.agents.intent_agent.contracts import (
 async def test_intent_agent_generates_intents():
 
     agent = IntentAgent(
-        skills_root=Path(
-            "src/agents/intent_agent/skills"
-        )
+        # skills_root=Path(
+        #     "src/agents/intent_agent/skills"
+        # )
     )
 
     requirement = Requirement(
